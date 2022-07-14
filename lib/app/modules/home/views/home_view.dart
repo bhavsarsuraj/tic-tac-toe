@@ -1,24 +1,45 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
-import '../controllers/home_controller.dart';
+import 'package:tic_tac_toe/app/modules/home/controllers/home_controller.dart';
+import 'package:tic_tac_toe/app/utils/enums.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('HomeView'),
+        title: Text('Home'),
         centerTitle: true,
       ),
-      body: Center(
-        child: Text(
-          'HomeView is working',
-          style: TextStyle(fontSize: 20),
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Container(
+              width: 160,
+              child: ElevatedButton(
+                onPressed: controller.didTapPlay,
+                child: Text('PLAY'),
+              ),
+            ),
+          ),
+          Center(
+            child: Container(
+              width: 160,
+              child: ElevatedButton(
+                onPressed: _didTapChangeDifficulty,
+                child: Text('DIFFICULTY'),
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  void _didTapChangeDifficulty() {
+    controller.changeDifficulty(Difficulty.EASY);
   }
 }

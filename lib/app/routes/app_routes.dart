@@ -4,9 +4,11 @@ part of 'app_pages.dart';
 abstract class Routes {
   Routes._();
   static const HOME = _Paths.HOME;
+  static const TIC_TAC_TOE_PLAY_PAGE = _Paths.TIC_TAC_TOE_PLAY_PAGE;
 }
 
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
+  static const TIC_TAC_TOE_PLAY_PAGE = '/tic-tac-toe-play-page';
 }
