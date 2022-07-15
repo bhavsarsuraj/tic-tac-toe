@@ -51,7 +51,7 @@ class TicTacToeBlockView extends StatelessWidget {
         return 'O';
       case BlockStatus.CROSS:
         return 'X';
-      case BlockStatus.none:
+      case BlockStatus.NONE:
         return '';
     }
   }

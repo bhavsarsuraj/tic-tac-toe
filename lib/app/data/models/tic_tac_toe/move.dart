@@ -7,6 +7,6 @@ class Move {
   Move({
     required this.row,
     required this.col,
-    this.blockStatus = BlockStatus.none,
+    this.blockStatus = BlockStatus.NONE,
   });
 }

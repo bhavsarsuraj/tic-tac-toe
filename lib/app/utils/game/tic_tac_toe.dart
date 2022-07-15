@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:get/get.dart';
+import 'package:tic_tac_toe/app/data/models/tic_tac_toe/board_evaluation_status.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/move.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/tic_tac_toe_board.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/tic_tac_toe_board_block.dart';
@@ -20,6 +21,7 @@ class TicTacToe {
   late TicTacToeBoard ticTacToeBoard;
   List<List<Rx<TicTacToeBoardBlock>>> get board => ticTacToeBoard.board;
   late BlockStatus _opponentMarkingSymbol;
+  BlockStatus get opponentMarkingSymbol => _opponentMarkingSymbol;
 
   void _initialise() {
     _initialiseBoard();
@@ -61,20 +63,19 @@ class TicTacToe {
         move.col >= board.length) return GameStatus.CONTINUE;
 
     final block = board[move.row][move.col];
-    if (block.value.blockStatus != BlockStatus.none) return GameStatus.CONTINUE;
+    if (block.value.blockStatus != BlockStatus.NONE) return GameStatus.CONTINUE;
 
     block.value.blockStatus = move.blockStatus;
     block.refresh();
-    return _evaluate(row: move.row, col: move.col);
+    return evaluate(row: move.row, col: move.col);
   }
 
   // Evaluates Game Status
-  GameStatus _evaluate({
+  GameStatus evaluate({
     required int row,
     required int col,
   }) {
-    bool hasMatch =
-        _isRowValid(row) || _isColumnValid(col) || _isDiagonalsValid();
+    bool hasMatch = isRowValid(row) || isColumnValid(col) || isDiagonalsValid();
     if (hasMatch) {
       // Game Finished
       return GameStatus.FINISHED;
@@ -86,7 +87,7 @@ class TicTacToe {
     return GameStatus.CONTINUE;
   }
 
-  bool _isRowValid(int row) {
+  bool isRowValid(int row) {
     // Validate row index
     if (row < 0 || row >= board.length) return false;
     final boardRow = board[row];
@@ -101,7 +102,7 @@ class TicTacToe {
     }
 
     if ((col == boardRow.length - 1) &&
-        boardRow[col].value.blockStatus != BlockStatus.none) {
+        boardRow[col].value.blockStatus != BlockStatus.NONE) {
       // All blocks of row have the same block status
       return true;
     } else {
@@ -109,7 +110,7 @@ class TicTacToe {
     }
   }
 
-  bool _isColumnValid(int col) {
+  bool isColumnValid(int col) {
     // Validate row and col
     if (col < 0 || col >= board.length) return false;
     int row = 0;
@@ -121,7 +122,7 @@ class TicTacToe {
       row++;
     }
     if ((row == board.length - 1) &&
-        board[row][col].value.blockStatus != BlockStatus.none) {
+        board[row][col].value.blockStatus != BlockStatus.NONE) {
       // All blocks of column have the same block status
       return true;
     } else {
@@ -129,7 +130,7 @@ class TicTacToe {
     }
   }
 
-  bool _isDiagonalsValid() {
+  bool isDiagonalsValid() {
     // Traversing diagonal from top left to bottom right
     int index = 0;
     while (index < board.length - 1 &&
@@ -138,7 +139,7 @@ class TicTacToe {
       index++;
     }
     if (index == board.length - 1 &&
-        board[index][index].value.blockStatus != BlockStatus.none) {
+        board[index][index].value.blockStatus != BlockStatus.NONE) {
       return true;
     }
 
@@ -154,7 +155,7 @@ class TicTacToe {
     }
     if ((row == board.length - 1) &&
         (col == 0) &&
-        board[row][col].value.blockStatus != BlockStatus.none) {
+        board[row][col].value.blockStatus != BlockStatus.NONE) {
       return true;
     }
     return false;
@@ -166,7 +167,7 @@ class TicTacToe {
 
   GameStatus playComputerMove() {
     final optimalMove = _playOptimalMove();
-    return _evaluate(row: optimalMove.row, col: optimalMove.col);
+    return evaluate(row: optimalMove.row, col: optimalMove.col);
   }
 
   Move _playOptimalMove() {
@@ -176,7 +177,7 @@ class TicTacToe {
     for (int row = 0; row < board.length; row++) {
       for (int col = 0; col < board.length; col++) {
         // Checks if AI can play move on this block
-        if (board[row][col].value.blockStatus == BlockStatus.none) {
+        if (board[row][col].value.blockStatus == BlockStatus.NONE) {
           // Marks this block with opponent symbol and checks the possiblity of winning through backtracking
           board[row][col].value.blockStatus = _opponentMarkingSymbol;
           final score = _minimax(row, col, depth: 0, isMaximizing: false);
@@ -204,7 +205,7 @@ class TicTacToe {
     I Won: 10,
     Opponent Won: -10,
     */
-    final gameStatus = _checkWinner(row, col);
+    final gameStatus = checkWinner(row, col);
     if (gameStatus.isTie) {
       return 0;
     } else if (gameStatus.winnerBlockStatus == myMarkingSymbol) {
@@ -219,7 +220,7 @@ class TicTacToe {
       int bestScore = -1000;
       for (int i = 0; i < board.length; i++) {
         for (int j = 0; j < board.length; j++) {
-          if (board[i][j].value.blockStatus == BlockStatus.none) {
+          if (board[i][j].value.blockStatus == BlockStatus.NONE) {
             board[i][j].value.blockStatus = _opponentMarkingSymbol;
             final score = _minimax(
               i,
@@ -237,7 +238,7 @@ class TicTacToe {
       int bestScore = 1000;
       for (int i = 0; i < board.length; i++) {
         for (int j = 0; j < board.length; j++) {
-          if (board[i][j].value.blockStatus == BlockStatus.none) {
+          if (board[i][j].value.blockStatus == BlockStatus.NONE) {
             board[i][j].value.blockStatus = myMarkingSymbol;
             final score = _minimax(
               i,
@@ -254,34 +255,27 @@ class TicTacToe {
     }
   }
 
-  _GameStatusModel _checkWinner(int row, int col) {
+  BoardEvaluationStatus checkWinner(int row, int col) {
     BlockStatus? winner;
 
     // horizontal
-    final validRow = _isRowValid(row);
+    final validRow = isRowValid(row);
     if (validRow) winner = board[row][col].value.blockStatus;
 
     // Vertical
-    final validCol = _isColumnValid(col);
+    final validCol = isColumnValid(col);
     if (validCol) winner = board[row][col].value.blockStatus;
 
     // Diagonal
-    final validDiagonals = _isDiagonalsValid();
+    final validDiagonals = isDiagonalsValid();
     if (validDiagonals) winner = board[row][col].value.blockStatus;
 
     if (winner == null && ticTacToeBoard.movesLeft == 0) {
       // If there is no winner and also no more moves left, then it will result into a tie
-      return _GameStatusModel(isTie: true);
+      return BoardEvaluationStatus(isTie: true);
     } else {
       // returns winner if any exists
-      return _GameStatusModel(winnerBlockStatus: winner);
+      return BoardEvaluationStatus(winnerBlockStatus: winner);
     }
   }
-}
-
-class _GameStatusModel {
-  final bool isTie;
-  final BlockStatus? winnerBlockStatus;
-
-  _GameStatusModel({this.isTie = false, this.winnerBlockStatus});
 }

@@ -80,7 +80,7 @@ class TicTacToePlayPageController extends GetxController {
   }
 
   void onTapBlock(int row, int col) {
-    if (ticTacToe.board[row][col].value.blockStatus != BlockStatus.none) return;
+    if (ticTacToe.board[row][col].value.blockStatus != BlockStatus.NONE) return;
     final gameStatus = ticTacToe.playMove(
       Move(
         row: row,

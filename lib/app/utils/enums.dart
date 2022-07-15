@@ -1,4 +1,4 @@
-enum BlockStatus { CROSS, CIRCLE, none }
+enum BlockStatus { CROSS, CIRCLE, NONE }
 
 enum GameStatus { CONTINUE, FINISHED, DRAW }
 
