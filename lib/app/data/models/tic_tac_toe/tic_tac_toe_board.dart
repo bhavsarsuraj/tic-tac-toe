@@ -4,7 +4,6 @@ import 'package:tic_tac_toe/app/utils/enums.dart';
 
 class TicTacToeBoard {
   List<List<Rx<TicTacToeBoardBlock>>> board;
-
   TicTacToeBoard({required this.board});
 
   void resetBoard() {
@@ -14,6 +13,18 @@ class TicTacToeBoard {
         block.refresh();
       });
     });
+  }
+
+  int get movesLeft {
+    int moves = 0;
+    for (final boardRow in board) {
+      for (final block in boardRow) {
+        if (block.value.blockStatus == BlockStatus.none) {
+          moves++;
+        }
+      }
+    }
+    return moves;
   }
 
   bool get noMovesLeft {

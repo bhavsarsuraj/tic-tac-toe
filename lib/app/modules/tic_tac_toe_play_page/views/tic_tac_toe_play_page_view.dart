@@ -8,8 +8,9 @@ class TicTacToePlayPageView extends GetView<TicTacToePlayPageController> {
   const TicTacToePlayPageView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final padding = 24.0;
     double size = min(Get.height, Get.width);
-    size = size - 2 * 24;
+    size = size - 2 * padding;
     return Scaffold(
       appBar: AppBar(
         title: Text('Tic-Tac-Toe'),
@@ -17,22 +18,24 @@ class TicTacToePlayPageView extends GetView<TicTacToePlayPageController> {
       ),
       body: Center(
         child: Container(
-          margin: const EdgeInsets.all(24),
+          margin: EdgeInsets.all(padding),
           height: size,
           width: size,
           child: AspectRatio(
             aspectRatio: 1,
             child: GridView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: controller.gridSize,
+                crossAxisCount: controller.boardSize,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
                 childAspectRatio: 1,
               ),
-              itemCount: controller.gridSize * controller.gridSize,
+              itemCount: controller.boardSize * controller.boardSize,
               itemBuilder: (context, index) {
-                final row = index ~/ controller.gridSize;
-                final col = index % controller.gridSize;
+                final row = index ~/ controller.boardSize;
+                final col = index % controller.boardSize;
                 return Obx(
                   () => TicTacToeBlockView(
                     block: controller.ticTacToe.board[row][col].value,

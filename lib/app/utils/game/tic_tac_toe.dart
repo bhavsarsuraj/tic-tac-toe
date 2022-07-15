@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:get/get.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/move.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/tic_tac_toe_board.dart';
@@ -18,22 +19,27 @@ class TicTacToe {
 
   late TicTacToeBoard ticTacToeBoard;
   List<List<Rx<TicTacToeBoardBlock>>> get board => ticTacToeBoard.board;
-
   late BlockStatus _opponentMarkingSymbol;
 
   void _initialise() {
-    final size = TicTacToeHelper.getSizeFromDifficulty(difficulty);
+    _initialiseBoard();
+    _setOpponentMarkingSymbol();
+  }
 
+  void _initialiseBoard() {
+    final boardSize = TicTacToeHelper.getBoardSizeFromDifficulty(difficulty);
     ticTacToeBoard = TicTacToeBoard(
       board: List.generate(
-        size,
+        boardSize,
         (index) => List.generate(
-          size,
+          boardSize,
           (index) => TicTacToeBoardBlock().obs,
         ).toList(),
       ).toList(),
     );
+  }
 
+  void _setOpponentMarkingSymbol() {
     switch (myMarkingSymbol) {
       case BlockStatus.CIRCLE:
         _opponentMarkingSymbol = BlockStatus.CROSS;
@@ -52,19 +58,17 @@ class TicTacToe {
     if (move.row < 0 ||
         move.col < 0 ||
         move.row >= board.length ||
-        move.col >= board[move.row].length) return GameStatus.CONTINUE;
+        move.col >= board.length) return GameStatus.CONTINUE;
 
     final block = board[move.row][move.col];
     if (block.value.blockStatus != BlockStatus.none) return GameStatus.CONTINUE;
 
     block.value.blockStatus = move.blockStatus;
     block.refresh();
-    return _evaluate(
-      row: move.row,
-      col: move.col,
-    );
+    return _evaluate(row: move.row, col: move.col);
   }
 
+  // Evaluates Game Status
   GameStatus _evaluate({
     required int row,
     required int col,
@@ -88,15 +92,17 @@ class TicTacToe {
     final boardRow = board[row];
 
     int col = 0;
+
+    // Continue loop till adjacent blockStatus matches in the row
     while (col < boardRow.length - 1 &&
         boardRow[col].value.blockStatus ==
             boardRow[col + 1].value.blockStatus) {
       col++;
     }
 
-    if (col >= 2 &&
-        (col == boardRow.length - 1) &&
+    if ((col == boardRow.length - 1) &&
         boardRow[col].value.blockStatus != BlockStatus.none) {
+      // All blocks of row have the same block status
       return true;
     } else {
       return false;
@@ -105,16 +111,18 @@ class TicTacToe {
 
   bool _isColumnValid(int col) {
     // Validate row and col
-    if (col < 0 || col >= board[0].length) return false;
+    if (col < 0 || col >= board.length) return false;
     int row = 0;
+
+    // Continue loop till adjacent blockStatus matches in the column
     while (row < board.length - 1 &&
         board[row][col].value.blockStatus ==
             board[row + 1][col].value.blockStatus) {
       row++;
     }
-    if (row >= 2 &&
-        (row == board.length - 1) &&
+    if ((row == board.length - 1) &&
         board[row][col].value.blockStatus != BlockStatus.none) {
+      // All blocks of column have the same block status
       return true;
     } else {
       return false;
@@ -122,8 +130,8 @@ class TicTacToe {
   }
 
   bool _isDiagonalsValid() {
+    // Traversing diagonal from top left to bottom right
     int index = 0;
-
     while (index < board.length - 1 &&
         board[index][index].value.blockStatus ==
             board[index + 1][index + 1].value.blockStatus) {
@@ -133,6 +141,8 @@ class TicTacToe {
         board[index][index].value.blockStatus != BlockStatus.none) {
       return true;
     }
+
+    // Traversing diagonal from top right to bottom left
     int col = 2;
     int row = 0;
     while (row < board.length - 1 &&
@@ -155,15 +165,123 @@ class TicTacToe {
   }
 
   GameStatus playComputerMove() {
+    final optimalMove = _playOptimalMove();
+    return _evaluate(row: optimalMove.row, col: optimalMove.col);
+  }
+
+  Move _playOptimalMove() {
+    int bestScore = -1000;
+    Move optimalMove = Move(row: 0, col: 0);
+
     for (int row = 0; row < board.length; row++) {
-      for (int col = 0; col < board[row].length; col++) {
-        if (ticTacToeBoard.canPlayMove(row, col)) {
+      for (int col = 0; col < board.length; col++) {
+        // Checks if AI can play move on this block
+        if (board[row][col].value.blockStatus == BlockStatus.none) {
+          // Marks this block with opponent symbol and checks the possiblity of winning through backtracking
           board[row][col].value.blockStatus = _opponentMarkingSymbol;
-          board[row][col].refresh();
-          return _evaluate(row: row, col: col);
+          final score = _minimax(row, col, depth: 0, isMaximizing: false);
+          // Reset this block
+          board[row][col].value.resetBlockStatus();
+          // Update best score and optimal move
+          if (score > bestScore) {
+            bestScore = score;
+            optimalMove.row = row;
+            optimalMove.col = col;
+          }
         }
       }
     }
-    return GameStatus.CONTINUE;
+    board[optimalMove.row][optimalMove.col].value.blockStatus =
+        _opponentMarkingSymbol;
+    board[optimalMove.row][optimalMove.col].refresh();
+    return optimalMove;
   }
+
+  int _minimax(int row, int col, {int depth = 0, bool isMaximizing = true}) {
+    /*
+    Points System
+    Tie: 0,
+    I Won: 10,
+    Opponent Won: -10,
+    */
+    final gameStatus = _checkWinner(row, col);
+    if (gameStatus.isTie) {
+      return 0;
+    } else if (gameStatus.winnerBlockStatus == myMarkingSymbol) {
+      // I Won
+      return -10;
+    } else if (gameStatus.winnerBlockStatus == _opponentMarkingSymbol) {
+      // Opponent Won
+      return 10;
+    }
+
+    if (isMaximizing) {
+      int bestScore = -1000;
+      for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board.length; j++) {
+          if (board[i][j].value.blockStatus == BlockStatus.none) {
+            board[i][j].value.blockStatus = _opponentMarkingSymbol;
+            final score = _minimax(
+              i,
+              j,
+              depth: depth + 1,
+              isMaximizing: false,
+            );
+            board[i][j].value.resetBlockStatus();
+            bestScore = max(score, bestScore);
+          }
+        }
+      }
+      return bestScore;
+    } else {
+      int bestScore = 1000;
+      for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board.length; j++) {
+          if (board[i][j].value.blockStatus == BlockStatus.none) {
+            board[i][j].value.blockStatus = myMarkingSymbol;
+            final score = _minimax(
+              i,
+              j,
+              depth: depth + 1,
+              isMaximizing: true,
+            );
+            board[i][j].value.resetBlockStatus();
+            bestScore = min(score, bestScore);
+          }
+        }
+      }
+      return bestScore;
+    }
+  }
+
+  _GameStatusModel _checkWinner(int row, int col) {
+    BlockStatus? winner;
+
+    // horizontal
+    final validRow = _isRowValid(row);
+    if (validRow) winner = board[row][col].value.blockStatus;
+
+    // Vertical
+    final validCol = _isColumnValid(col);
+    if (validCol) winner = board[row][col].value.blockStatus;
+
+    // Diagonal
+    final validDiagonals = _isDiagonalsValid();
+    if (validDiagonals) winner = board[row][col].value.blockStatus;
+
+    if (winner == null && ticTacToeBoard.movesLeft == 0) {
+      // If there is no winner and also no more moves left, then it will result into a tie
+      return _GameStatusModel(isTie: true);
+    } else {
+      // returns winner if any exists
+      return _GameStatusModel(winnerBlockStatus: winner);
+    }
+  }
+}
+
+class _GameStatusModel {
+  final bool isTie;
+  final BlockStatus? winnerBlockStatus;
+
+  _GameStatusModel({this.isTie = false, this.winnerBlockStatus});
 }

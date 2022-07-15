@@ -20,7 +20,7 @@ class TicTacToePlayPageController extends GetxController {
   TicTacToePlayPageController({this.arguments});
 
   late TicTacToe ticTacToe;
-  late int gridSize;
+  late int boardSize;
 
   final _isMyTurn = true.obs;
   bool get isMyTurn => this._isMyTurn.value;
@@ -51,7 +51,7 @@ class TicTacToePlayPageController extends GetxController {
     }
     _configureFirstTurn();
     _configureTicTacToe();
-    _configureGridSize();
+    _configureBoardSize();
   }
 
   void _configureFirstTurn() {
@@ -69,8 +69,8 @@ class TicTacToePlayPageController extends GetxController {
     );
   }
 
-  void _configureGridSize() {
-    gridSize = TicTacToeHelper.getSizeFromDifficulty(
+  void _configureBoardSize() {
+    boardSize = TicTacToeHelper.getBoardSizeFromDifficulty(
       arguments!.difficulty,
     );
   }
@@ -85,7 +85,7 @@ class TicTacToePlayPageController extends GetxController {
       Move(
         row: row,
         col: col,
-        blockStatus: BlockStatus.CROSS,
+        blockStatus: ticTacToe.myMarkingSymbol,
       ),
     );
 

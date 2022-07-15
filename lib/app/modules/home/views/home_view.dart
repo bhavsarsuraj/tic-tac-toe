@@ -25,6 +25,7 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
           ),
+          SizedBox(height: 12),
           Center(
             child: Container(
               width: 160,
