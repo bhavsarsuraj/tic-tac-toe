@@ -1,5 +1,9 @@
-enum BlockStatus { CROSS, CIRCLE, none }
+enum BlockStatus { CROSS, ZERO, NONE }
 
-enum GameStatus { CONTINUE, FINISHED, DRAW }
+enum GameResultStatus { CONTINUE, FINISHED, DRAW }
 
 enum Difficulty { EASY, MEDIUM, HARD }
+
+enum TicTacToeSymbol { CROSS, ZERO }
+
+enum GameResult { WON, LOST, DRAW }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/tic_tac_toe_board_block.dart';
+import 'package:tic_tac_toe/app/utils/constants/app_colors.dart';
+import 'package:tic_tac_toe/app/utils/constants/images.dart';
 import 'package:tic_tac_toe/app/utils/enums.dart';
 
 class TicTacToeBlockView extends StatelessWidget {
@@ -25,34 +27,32 @@ class TicTacToeBlockView extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: backgroundColor,
-          border: Border.all(
-            width: 1,
-            color: Colors.black,
-          ),
+          color: AppColors.boardBackground,
         ),
         child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
+          child: mark,
         ),
       ),
     );
   }
 
-  String get text {
+  Widget get mark {
     switch (block.blockStatus) {
-      case BlockStatus.CIRCLE:
-        return 'O';
+      case BlockStatus.ZERO:
+        return Image.asset(
+          Images.zero,
+          height: 70,
+          width: 64,
+        );
       case BlockStatus.CROSS:
-        return 'X';
-      case BlockStatus.none:
-        return '';
+        return Image.asset(
+          Images.cross,
+          fit: BoxFit.cover,
+          height: 70,
+          width: 64,
+        );
+      case BlockStatus.NONE:
+        return Container();
     }
   }
 }

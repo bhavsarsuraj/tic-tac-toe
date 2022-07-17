@@ -1,46 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tic_tac_toe/app/modules/home/controllers/home_controller.dart';
-import 'package:tic_tac_toe/app/utils/enums.dart';
+import 'package:tic_tac_toe/app/utils/constants/images.dart';
+import 'package:tic_tac_toe/app/utils/widgets/base_scaffold.dart';
+import 'package:tic_tac_toe/app/utils/widgets/buttons/primary_button.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-        centerTitle: true,
-      ),
+    return BaseScaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Center(
-            child: Container(
-              width: 160,
-              child: ElevatedButton(
-                onPressed: controller.didTapPlay,
-                child: Text('PLAY'),
-              ),
-            ),
+          Image.asset(
+            Images.ticTacToe,
+            height: 136,
+            fit: BoxFit.contain,
           ),
-          SizedBox(height: 12),
-          Center(
-            child: Container(
-              width: 160,
-              child: ElevatedButton(
-                onPressed: _didTapChangeDifficulty,
-                child: Text('DIFFICULTY'),
-              ),
-            ),
+          SizedBox(height: 60),
+          PrimaryButton(
+            text: 'New Game',
+            onTap: controller.didTapPlay,
+            width: 240,
+            imagePath: Images.play,
+            imageWidth: 16,
+            imageHeight: 20,
+          ),
+          SizedBox(height: 28),
+          PrimaryButton(
+            text: 'Multiplayer',
+            onTap: controller.didTapMultiplayer,
+            width: 240,
+            imagePath: Images.multiplayer,
+            imageWidth: 26,
+            imageHeight: 26,
+          ),
+          SizedBox(height: 28),
+          PrimaryButton(
+            text: 'How to play',
+            onTap: controller.didTapHowToPlay,
+            width: 240,
+            imagePath: Images.help,
+            imageWidth: 26,
+            imageHeight: 26,
           ),
         ],
       ),
     );
-  }
-
-  void _didTapChangeDifficulty() {
-    controller.changeDifficulty(Difficulty.EASY);
   }
 }

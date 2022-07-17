@@ -19,7 +19,7 @@ class TicTacToeBoard {
     int moves = 0;
     for (final boardRow in board) {
       for (final block in boardRow) {
-        if (block.value.blockStatus == BlockStatus.none) {
+        if (block.value.blockStatus == BlockStatus.NONE) {
           moves++;
         }
       }
@@ -30,7 +30,7 @@ class TicTacToeBoard {
   bool get noMovesLeft {
     for (final boardRow in board) {
       for (final block in boardRow) {
-        if (block.value.blockStatus == BlockStatus.none) {
+        if (block.value.blockStatus == BlockStatus.NONE) {
           return false;
         }
       }
@@ -43,6 +43,6 @@ class TicTacToeBoard {
     if (row < 0 || col < 0 || row >= board.length || col > board[row].length)
       return false;
 
-    return board[row][col].value.blockStatus == BlockStatus.none;
+    return board[row][col].value.blockStatus == BlockStatus.NONE;
   }
 }

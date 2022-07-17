@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:get/get.dart';
+import 'package:tic_tac_toe/app/data/models/tic_tac_toe/game_status.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/move.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/tic_tac_toe_board.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/tic_tac_toe_board_block.dart';
@@ -41,14 +42,14 @@ class TicTacToe {
 
   void _setOpponentMarkingSymbol() {
     switch (myMarkingSymbol) {
-      case BlockStatus.CIRCLE:
+      case BlockStatus.ZERO:
         _opponentMarkingSymbol = BlockStatus.CROSS;
         return;
       case BlockStatus.CROSS:
-        _opponentMarkingSymbol = BlockStatus.CIRCLE;
+        _opponentMarkingSymbol = BlockStatus.ZERO;
         return;
       default:
-        _opponentMarkingSymbol = BlockStatus.CIRCLE;
+        _opponentMarkingSymbol = BlockStatus.ZERO;
         return;
     }
   }
@@ -58,10 +59,12 @@ class TicTacToe {
     if (move.row < 0 ||
         move.col < 0 ||
         move.row >= board.length ||
-        move.col >= board.length) return GameStatus.CONTINUE;
+        move.col >= board.length)
+      return GameStatus(resultStatus: GameResultStatus.CONTINUE);
 
     final block = board[move.row][move.col];
-    if (block.value.blockStatus != BlockStatus.none) return GameStatus.CONTINUE;
+    if (block.value.blockStatus != BlockStatus.NONE)
+      return GameStatus(resultStatus: GameResultStatus.CONTINUE);
 
     block.value.blockStatus = move.blockStatus;
     block.refresh();
@@ -77,13 +80,18 @@ class TicTacToe {
         _isRowValid(row) || _isColumnValid(col) || _isDiagonalsValid();
     if (hasMatch) {
       // Game Finished
-      return GameStatus.FINISHED;
+      return GameStatus(
+        resultStatus: GameResultStatus.FINISHED,
+        winningSymbol: board[row][col].value.blockStatus == BlockStatus.ZERO
+            ? TicTacToeSymbol.ZERO
+            : TicTacToeSymbol.CROSS,
+      );
     } else if (ticTacToeBoard.noMovesLeft) {
       // Game finished and result in draw
-      return GameStatus.DRAW;
+      return GameStatus(resultStatus: GameResultStatus.DRAW);
     }
 
-    return GameStatus.CONTINUE;
+    return GameStatus(resultStatus: GameResultStatus.CONTINUE);
   }
 
   bool _isRowValid(int row) {
@@ -101,7 +109,7 @@ class TicTacToe {
     }
 
     if ((col == boardRow.length - 1) &&
-        boardRow[col].value.blockStatus != BlockStatus.none) {
+        boardRow[col].value.blockStatus != BlockStatus.NONE) {
       // All blocks of row have the same block status
       return true;
     } else {
@@ -121,7 +129,7 @@ class TicTacToe {
       row++;
     }
     if ((row == board.length - 1) &&
-        board[row][col].value.blockStatus != BlockStatus.none) {
+        board[row][col].value.blockStatus != BlockStatus.NONE) {
       // All blocks of column have the same block status
       return true;
     } else {
@@ -138,7 +146,7 @@ class TicTacToe {
       index++;
     }
     if (index == board.length - 1 &&
-        board[index][index].value.blockStatus != BlockStatus.none) {
+        board[index][index].value.blockStatus != BlockStatus.NONE) {
       return true;
     }
 
@@ -154,7 +162,7 @@ class TicTacToe {
     }
     if ((row == board.length - 1) &&
         (col == 0) &&
-        board[row][col].value.blockStatus != BlockStatus.none) {
+        board[row][col].value.blockStatus != BlockStatus.NONE) {
       return true;
     }
     return false;
@@ -176,7 +184,7 @@ class TicTacToe {
     for (int row = 0; row < board.length; row++) {
       for (int col = 0; col < board.length; col++) {
         // Checks if AI can play move on this block
-        if (board[row][col].value.blockStatus == BlockStatus.none) {
+        if (board[row][col].value.blockStatus == BlockStatus.NONE) {
           // Marks this block with opponent symbol and checks the possiblity of winning through backtracking
           board[row][col].value.blockStatus = _opponentMarkingSymbol;
           final score = _minimax(row, col, depth: 0, isMaximizing: false);
@@ -219,7 +227,7 @@ class TicTacToe {
       int bestScore = -1000;
       for (int i = 0; i < board.length; i++) {
         for (int j = 0; j < board.length; j++) {
-          if (board[i][j].value.blockStatus == BlockStatus.none) {
+          if (board[i][j].value.blockStatus == BlockStatus.NONE) {
             board[i][j].value.blockStatus = _opponentMarkingSymbol;
             final score = _minimax(
               i,
@@ -237,7 +245,7 @@ class TicTacToe {
       int bestScore = 1000;
       for (int i = 0; i < board.length; i++) {
         for (int j = 0; j < board.length; j++) {
-          if (board[i][j].value.blockStatus == BlockStatus.none) {
+          if (board[i][j].value.blockStatus == BlockStatus.NONE) {
             board[i][j].value.blockStatus = myMarkingSymbol;
             final score = _minimax(
               i,
