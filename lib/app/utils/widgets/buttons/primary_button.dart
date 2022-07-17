@@ -31,10 +31,6 @@ class PrimaryButton extends StatelessWidget {
           HapticFeedback.vibrate();
           onTap();
         },
-        onTapDown: () {
-          HapticFeedback.vibrate();
-          onTap();
-        },
         shadowColor: AppColors.black,
         rightShadowColor: AppColors.black,
         depth: 8,
