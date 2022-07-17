@@ -8,6 +8,7 @@ abstract class Routes {
   static const SPLASH_PAGE = _Paths.SPLASH_PAGE;
   static const GAME_RESULT_PAGE = _Paths.GAME_RESULT_PAGE;
   static const CUSTOMIZE_GAME_PAGE = _Paths.CUSTOMIZE_GAME_PAGE;
+  static const HOW_TO_PLAY_PAGE = _Paths.HOW_TO_PLAY_PAGE;
 }
 
 abstract class _Paths {
@@ -17,4 +18,5 @@ abstract class _Paths {
   static const SPLASH_PAGE = '/splash-page';
   static const GAME_RESULT_PAGE = '/game-result-page';
   static const CUSTOMIZE_GAME_PAGE = '/customize-game-page';
+  static const HOW_TO_PLAY_PAGE = '/how-to-play-page';
 }

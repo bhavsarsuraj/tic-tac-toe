@@ -6,6 +6,8 @@ import '../modules/game_result_page/bindings/game_result_page_binding.dart';
 import '../modules/game_result_page/views/game_result_page_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/how_to_play_page/bindings/how_to_play_page_binding.dart';
+import '../modules/how_to_play_page/views/how_to_play_page_view.dart';
 import '../modules/splash_page/bindings/splash_page_binding.dart';
 import '../modules/splash_page/views/splash_page_view.dart';
 import '../modules/tic_tac_toe_play_page/bindings/tic_tac_toe_play_page_binding.dart';
@@ -43,6 +45,11 @@ class AppPages {
       name: _Paths.CUSTOMIZE_GAME_PAGE,
       page: () => const CustomizeGamePageView(),
       binding: CustomizeGamePageBinding(),
+    ),
+    GetPage(
+      name: _Paths.HOW_TO_PLAY_PAGE,
+      page: () => const HowToPlayPageView(),
+      binding: HowToPlayPageBinding(),
     ),
   ];
 }

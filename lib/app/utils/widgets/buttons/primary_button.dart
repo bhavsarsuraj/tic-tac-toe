@@ -23,7 +23,7 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width,
       child: NeoPopButton(
         color: AppColors.red,

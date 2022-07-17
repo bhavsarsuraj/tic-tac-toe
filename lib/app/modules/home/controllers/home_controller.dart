@@ -25,6 +25,6 @@ class HomeController extends GetxController {
   }
 
   void didTapHowToPlay() {
-    //
+    Get.toNamed(Routes.HOW_TO_PLAY_PAGE);
   }
 }
