@@ -107,39 +107,28 @@ class _PlayingBoard extends GetView<TicTacToePlayPageController> {
       child: Center(
         child: AspectRatio(
           aspectRatio: 1,
-          child: Container(
-            margin: EdgeInsets.only(
-              left: 20,
-              top: 20,
-              right: 18,
-              bottom: 28,
+          child: GridView.builder(
+            padding: EdgeInsets.all(20),
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: controller.boardSize,
+              childAspectRatio: 1,
             ),
-            decoration: BoxDecoration(
-              color: AppColors.brown,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: GridView.builder(
-              padding: EdgeInsets.zero,
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: controller.boardSize,
-                mainAxisSpacing: 2,
-                crossAxisSpacing: 2,
-                childAspectRatio: 1,
-              ),
-              itemCount: controller.boardSize * controller.boardSize,
-              itemBuilder: (context, index) {
-                final row = index ~/ controller.boardSize;
-                final col = index % controller.boardSize;
-                return Obx(
-                  () => TicTacToeBlockView(
-                    block: controller.ticTacToe.board[row][col].value,
-                    onTap: () => controller.onTapBlock(row, col),
-                  ),
-                );
-              },
-            ),
+            itemCount: controller.boardSize * controller.boardSize,
+            itemBuilder: (context, index) {
+              final row = index ~/ controller.boardSize;
+              final col = index % controller.boardSize;
+              return Obx(
+                () => TicTacToeBlockView(
+                  block: controller.ticTacToe.board[row][col].value,
+                  onTap: () => controller.onTapBlock(row, col),
+                  difficulty: controller.arguments!.difficulty,
+                  row: row,
+                  col: col,
+                ),
+              );
+            },
           ),
         ),
       ),
