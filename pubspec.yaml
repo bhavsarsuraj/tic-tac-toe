@@ -18,6 +18,13 @@ dev_dependencies:
   flutter_test: 
     sdk: flutter
   flutter_native_splash: ^2.2.4
+  icons_launcher: ^1.2.1
+  
+flutter_icons:
+  image_path: 'assets/images/logo.png'
+  adaptive_icon_background: "assets/images/background_logo.png"
+  ios: true
+  android: true
 
 flutter: 
   uses-material-design: true
