@@ -2,131 +2,65 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/move.dart';
 import 'package:tic_tac_toe/app/utils/enums.dart';
 import 'package:tic_tac_toe/app/utils/game/tic_tac_toe.dart';
+import 'package:tic_tac_toe/app/utils/helpers/tic_tac_toe_helper.dart';
 
 void main() {
-  group('Initialise', () {
-    test('initialising board with EASY difficulty and CIRCLE marking as self',
-        () {
-      // Arrange
-      final easy = Difficulty.EASY;
-      final myMarkingSymbol = BlockStatus.CIRCLE;
-
-      // Act
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
-
-      // Assert
-      expect(ticTacToe.board.length, equals(3));
-      for (int i = 0; i < ticTacToe.board.length; i++) {
-        expect(ticTacToe.board[i].length, equals(3));
-      }
-    });
-
-    test('initialising board with MEDIUM difficulty and CIRCLE marking as self',
-        () {
-      // Arrange
-      final medium = Difficulty.MEDIUM;
-      final myMarkingSymbol = BlockStatus.CIRCLE;
-
-      // Act
-      final ticTacToe = TicTacToe(
-        difficulty: medium,
-        myMarkingSymbol: myMarkingSymbol,
-      );
-
-      // Assert
-      expect(ticTacToe.board.length, equals(4));
-      for (int i = 0; i < ticTacToe.board.length; i++) {
-        expect(ticTacToe.board[i].length, equals(4));
-      }
-    });
-
-    test('initialising board with HARD difficulty and CIRCLE marking as self',
-        () {
-      // Arrange
-      final hard = Difficulty.HARD;
-      final myMarkingSymbol = BlockStatus.CIRCLE;
-
-      // Act
-      final ticTacToe = TicTacToe(
-        difficulty: hard,
-        myMarkingSymbol: myMarkingSymbol,
-      );
-
-      // Assert
-      expect(ticTacToe.board.length, equals(5));
-      for (int i = 0; i < ticTacToe.board.length; i++) {
-        expect(ticTacToe.board[i].length, equals(5));
-      }
-    });
-  });
-
   group('Opponent marking symbol', () {
-    test('initialising my marking symbol with CIRCLE in EASY difficulty', () {
+    test('initialising my marking symbol with ZERO', () {
       // Arrange
-      final myMarkingSymbol = BlockStatus.CIRCLE;
-      final easy = Difficulty.EASY;
+      final myMarkingSymbol = TicTacToeSymbol.ZERO;
 
       // Act
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
+      final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
 
       // Assert
       expect(
         ticTacToe.opponentMarkingSymbol,
-        equals(BlockStatus.CROSS),
+        equals(TicTacToeSymbol.CROSS),
       );
     });
 
-    test('initialising my marking symbol with CROSS in EASY difficulty', () {
+    test('initialising my marking symbol with CROSS', () {
       // Arrange
-      final myMarkingSymbol = BlockStatus.CROSS;
-      final easy = Difficulty.EASY;
+      final myMarkingSymbol = TicTacToeSymbol.CROSS;
 
       // Act
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
+      final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
 
       // Assert
       expect(
         ticTacToe.opponentMarkingSymbol,
-        equals(BlockStatus.CIRCLE),
+        equals(TicTacToeSymbol.ZERO),
       );
     });
   });
 
   group('Play Move', () {
     test(
-      'play move in specific valid block with EASY difficulty and CROSS marking as self',
+      'play move in specific valid block with CROSS marking as self',
       () {
         // Arrange
         final firstRow = 0;
         final thirdColumn = 2;
         final secondRow = 1;
         final firstColumn = 0;
-        final easy = Difficulty.EASY;
-        final myMarkingSymbol = BlockStatus.CROSS;
+        final myMarkingSymbol = TicTacToeSymbol.CROSS;
         final none = BlockStatus.NONE;
         final firstRowThirdColumnMove = Move(
           row: firstRow,
           col: thirdColumn,
-          blockStatus: myMarkingSymbol,
+          blockStatus: TicTacToeHelper.getBlockStatusFromSymbol(
+            myMarkingSymbol,
+          ),
         );
         final secondRowFirstColumnMove = Move(
           row: secondRow,
           col: firstColumn,
-          blockStatus: myMarkingSymbol,
+          blockStatus: TicTacToeHelper.getBlockStatusFromSymbol(
+            myMarkingSymbol,
+          ),
         );
-        final ticTacToe = TicTacToe(
-          difficulty: easy,
-          myMarkingSymbol: myMarkingSymbol,
-        );
+        final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
 
         // Act
         ticTacToe.playMove(firstRowThirdColumnMove);
@@ -137,8 +71,12 @@ void main() {
           for (int j = 0; j < ticTacToe.board.length; j++) {
             if ((i == firstRow && j == thirdColumn) ||
                 (i == secondRow && j == firstColumn)) {
-              expect(ticTacToe.board[i][j].value.blockStatus,
-                  equals(myMarkingSymbol));
+              expect(
+                ticTacToe.board[i][j].value.blockStatus,
+                equals(
+                  TicTacToeHelper.getBlockStatusFromSymbol(myMarkingSymbol),
+                ),
+              );
             } else {
               expect(ticTacToe.board[i][j].value.blockStatus, equals(none));
             }
@@ -148,29 +86,26 @@ void main() {
     );
 
     test(
-      'play move in invalid block with EASY difficulty and CROSS marking as self',
+      'play move in invalid block with CROSS marking as self',
       () {
         // Arrange
         final minusOneRow = -1;
         final thirdColumn = 3;
-        final easy = Difficulty.EASY;
-        final myMarkingSymbol = BlockStatus.CROSS;
+        final myMarkingSymbol = TicTacToeSymbol.CROSS;
         final none = BlockStatus.NONE;
         final invalidMove = Move(
           row: minusOneRow,
           col: thirdColumn,
-          blockStatus: myMarkingSymbol,
+          blockStatus:
+              TicTacToeHelper.getBlockStatusFromSymbol(myMarkingSymbol),
         );
-        final ticTacToe = TicTacToe(
-          difficulty: easy,
-          myMarkingSymbol: myMarkingSymbol,
-        );
+        final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
 
         // Act
         final gameStatus = ticTacToe.playMove(invalidMove);
 
         // Assert
-        expect(gameStatus, GameStatus.CONTINUE);
+        expect(gameStatus.resultStatus, equals(GameResultStatus.CONTINUE));
         for (int i = 0; i < ticTacToe.board.length; i++) {
           for (int j = 0; j < ticTacToe.board.length; j++) {
             expect(ticTacToe.board[i][j].value.blockStatus, none);
@@ -181,16 +116,12 @@ void main() {
   });
 
   group('Validate Row, Column and Diagonal', () {
-    test('validate row with EASY difficulty and CROSS marking as self', () {
+    test('validate row with CROSS marking as self', () {
       // Arrange
       final firstRow = 0;
       final secondRow = 1;
-      final easy = Difficulty.EASY;
-      final myMarkingSymbol = BlockStatus.CROSS;
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
+      final myMarkingSymbol = TicTacToeSymbol.CROSS;
+      final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
 
       // Act
       for (int i = 0; i < ticTacToe.board.length; i++) {
@@ -207,16 +138,12 @@ void main() {
       expect(invalidRow, equals(false));
     });
 
-    test('validate column with EASY difficulty and CROSS marking as self', () {
+    test('validate column with CROSS marking as self', () {
       // Arrange
       final secondColumn = 1;
       final thirdColumn = 2;
-      final easy = Difficulty.EASY;
-      final myMarkingSymbol = BlockStatus.CROSS;
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
+      final myMarkingSymbol = TicTacToeSymbol.CROSS;
+      final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
 
       // Act
       for (int i = 0; i < ticTacToe.board.length; i++) {
@@ -233,19 +160,15 @@ void main() {
       expect(invalidColumn, equals(false));
     });
 
-    test('validate diagonals with EASY difficulty and CROSS marking as self',
-        () {
+    test('validate diagonals with CROSS marking as self', () {
       // Arrange
       final firstRow = 0;
       final secondColumn = 1;
       final secondRow = 1;
       final thirdColumn = 2;
-      final easy = Difficulty.EASY;
-      final myMarkingSymbol = BlockStatus.CROSS;
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
+
+      final myMarkingSymbol = TicTacToeSymbol.CROSS;
+      final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
 
       // Act
       for (int i = 0, j = 0;
@@ -281,12 +204,8 @@ void main() {
 
   test('reset board', () {
     // Arrange
-    final easy = Difficulty.EASY;
-    final myMarkingSymbol = BlockStatus.CROSS;
-    final ticTacToe = TicTacToe(
-      difficulty: easy,
-      myMarkingSymbol: myMarkingSymbol,
-    );
+    final myMarkingSymbol = TicTacToeSymbol.CROSS;
+    final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
 
     // Act
     for (int i = 0; i < ticTacToe.board.length; i++) {
@@ -321,14 +240,11 @@ void main() {
   });
 
   group('Check Winner', () {
-    test('CROSS symbol winner with EASY difficulty', () {
+    test('CROSS symbol winner', () {
       // Arrange
-      final easy = Difficulty.EASY;
-      final myMarkingSymbol = BlockStatus.CROSS;
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
+
+      final myMarkingSymbol = TicTacToeSymbol.CROSS;
+      final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
       final lastPlayedRow = 0;
       final lastPlayedColumn = 1;
       /*
@@ -340,15 +256,15 @@ void main() {
       // Act
       ticTacToe.board[0][0].value.blockStatus = BlockStatus.CROSS;
       ticTacToe.board[0][1].value.blockStatus = BlockStatus.CROSS;
-      ticTacToe.board[0][2].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[0][2].value.blockStatus = BlockStatus.ZERO;
 
-      ticTacToe.board[1][0].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[1][0].value.blockStatus = BlockStatus.ZERO;
       ticTacToe.board[1][1].value.blockStatus = BlockStatus.CROSS;
       ticTacToe.board[1][2].value.blockStatus = BlockStatus.CROSS;
 
-      ticTacToe.board[2][0].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[2][0].value.blockStatus = BlockStatus.ZERO;
       ticTacToe.board[2][1].value.blockStatus = BlockStatus.CROSS;
-      ticTacToe.board[2][2].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[2][2].value.blockStatus = BlockStatus.ZERO;
 
       final boardEvaluationStatus = ticTacToe.checkWinner(
         lastPlayedRow,
@@ -363,14 +279,10 @@ void main() {
       );
     });
 
-    test('CIRCLE symbol winner with EASY difficulty', () {
+    test('CIRCLE symbol winner', () {
       // Arrange
-      final easy = Difficulty.EASY;
-      final myMarkingSymbol = BlockStatus.CROSS;
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
+      final myMarkingSymbol = TicTacToeSymbol.CROSS;
+      final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
       final lastPlayedRow = 2;
       final lastPlayedColumn = 0;
       /*
@@ -382,15 +294,15 @@ void main() {
       // Act
       ticTacToe.board[0][0].value.blockStatus = BlockStatus.CROSS;
       ticTacToe.board[0][1].value.blockStatus = BlockStatus.CROSS;
-      ticTacToe.board[0][2].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[0][2].value.blockStatus = BlockStatus.ZERO;
 
-      ticTacToe.board[1][0].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[1][0].value.blockStatus = BlockStatus.ZERO;
       ticTacToe.board[1][1].value.blockStatus = BlockStatus.CROSS;
       ticTacToe.board[1][2].value.blockStatus = BlockStatus.CROSS;
 
-      ticTacToe.board[2][0].value.blockStatus = BlockStatus.CIRCLE;
-      ticTacToe.board[2][1].value.blockStatus = BlockStatus.CIRCLE;
-      ticTacToe.board[2][2].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[2][0].value.blockStatus = BlockStatus.ZERO;
+      ticTacToe.board[2][1].value.blockStatus = BlockStatus.ZERO;
+      ticTacToe.board[2][2].value.blockStatus = BlockStatus.ZERO;
 
       final boardEvaluationStatus = ticTacToe.checkWinner(
         lastPlayedRow,
@@ -401,18 +313,15 @@ void main() {
       expect(boardEvaluationStatus.isTie, equals(false));
       expect(
         boardEvaluationStatus.winnerBlockStatus,
-        equals(BlockStatus.CIRCLE),
+        equals(BlockStatus.ZERO),
       );
     });
 
-    test('tie with EASY difficulty', () {
+    test('tie', () {
       // Arrange
-      final easy = Difficulty.EASY;
-      final myMarkingSymbol = BlockStatus.CROSS;
-      final ticTacToe = TicTacToe(
-        difficulty: easy,
-        myMarkingSymbol: myMarkingSymbol,
-      );
+
+      final myMarkingSymbol = TicTacToeSymbol.CROSS;
+      final ticTacToe = TicTacToe(myMarkingSymbol: myMarkingSymbol);
       final lastPlayedRow = 2;
       final lastPlayedColumn = 2;
       /*
@@ -423,16 +332,16 @@ void main() {
 
       // Act
       ticTacToe.board[0][0].value.blockStatus = BlockStatus.CROSS;
-      ticTacToe.board[0][1].value.blockStatus = BlockStatus.CIRCLE;
-      ticTacToe.board[0][2].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[0][1].value.blockStatus = BlockStatus.ZERO;
+      ticTacToe.board[0][2].value.blockStatus = BlockStatus.ZERO;
 
-      ticTacToe.board[1][0].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[1][0].value.blockStatus = BlockStatus.ZERO;
       ticTacToe.board[1][1].value.blockStatus = BlockStatus.CROSS;
       ticTacToe.board[1][2].value.blockStatus = BlockStatus.CROSS;
 
-      ticTacToe.board[2][0].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[2][0].value.blockStatus = BlockStatus.ZERO;
       ticTacToe.board[2][1].value.blockStatus = BlockStatus.CROSS;
-      ticTacToe.board[2][2].value.blockStatus = BlockStatus.CIRCLE;
+      ticTacToe.board[2][2].value.blockStatus = BlockStatus.ZERO;
 
       final boardEvaluationStatus = ticTacToe.checkWinner(
         lastPlayedRow,

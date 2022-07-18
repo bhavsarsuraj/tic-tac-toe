@@ -3,20 +3,18 @@ import 'package:tic_tac_toe/app/utils/Helpers/tic_tac_toe_helper.dart';
 import 'package:tic_tac_toe/app/utils/enums.dart';
 
 void main() {
-  test('board size', () {
+  test('cross block status', () {
     // Arrange
-    final easy = Difficulty.EASY;
-    final medium = Difficulty.MEDIUM;
-    final hard = Difficulty.HARD;
-
+    final crossSymbol = TicTacToeSymbol.CROSS;
+    final zeroSymbol = TicTacToeSymbol.ZERO;
     // Act
-    final easyDifficulty = TicTacToeHelper.getBoardSizeFromDifficulty(easy);
-    final mediumDifficulty = TicTacToeHelper.getBoardSizeFromDifficulty(medium);
-    final hardDifficulty = TicTacToeHelper.getBoardSizeFromDifficulty(hard);
+    final crossBlockStatus =
+        TicTacToeHelper.getBlockStatusFromSymbol(crossSymbol);
+    final zeroBlockStatus =
+        TicTacToeHelper.getBlockStatusFromSymbol(zeroSymbol);
 
     // Assert
-    expect(easyDifficulty, equals(3));
-    expect(mediumDifficulty, equals(4));
-    expect(hardDifficulty, equals(5));
+    expect(crossBlockStatus, equals(BlockStatus.CROSS));
+    expect(zeroBlockStatus, equals(BlockStatus.ZERO));
   });
 }
