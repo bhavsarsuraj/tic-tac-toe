@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/app/data/models/tic_tac_toe/tic_tac_toe_board_block.dart';
-import 'package:tic_tac_toe/app/utils/Helpers/tic_tac_toe_helper.dart';
 import 'package:tic_tac_toe/app/utils/constants/app_colors.dart';
 import 'package:tic_tac_toe/app/utils/constants/images.dart';
 import 'package:tic_tac_toe/app/utils/enums.dart';
@@ -13,7 +12,6 @@ class TicTacToeBlockView extends StatelessWidget {
   final double? height;
   final int row;
   final int col;
-  final Difficulty difficulty;
   const TicTacToeBlockView({
     Key? key,
     required this.block,
@@ -21,7 +19,6 @@ class TicTacToeBlockView extends StatelessWidget {
     this.backgroundColor = Colors.white,
     required this.row,
     required this.col,
-    required this.difficulty,
     this.width,
     this.height,
   }) : super(key: key);
@@ -46,7 +43,7 @@ class TicTacToeBlockView extends StatelessWidget {
   }
 
   Border? get border {
-    final boardSize = TicTacToeHelper.getBoardSizeFromDifficulty(difficulty);
+    final boardSize = 3;
     final borderSide = BorderSide(color: AppColors.brown);
     if (row == 0) {
       if (col == 0) {

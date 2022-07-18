@@ -126,7 +126,9 @@ class _ResultImage extends GetView<GameResultPageController> {
       case GameResult.WON:
         return Images.congratulations;
       case GameResult.LOST:
-        return Images.robotWon;
+        return controller.arguments!.isOpponentRobot
+            ? Images.robotWon
+            : Images.congratulations;
       case GameResult.DRAW:
         return Images.tied;
     }
@@ -138,13 +140,16 @@ class _ResultText extends GetView<GameResultPageController> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      result,
-      style: Styles.semibold(
-        40,
-        AppColors.black,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        result,
+        style: Styles.semibold(
+          40,
+          AppColors.black,
+        ),
+        textAlign: TextAlign.center,
       ),
-      textAlign: TextAlign.center,
     );
   }
 
@@ -153,7 +158,9 @@ class _ResultText extends GetView<GameResultPageController> {
       case GameResult.WON:
         return 'Congrats!\nYou Won';
       case GameResult.LOST:
-        return 'HAHAHAHA!';
+        return controller.arguments!.isOpponentRobot
+            ? 'HAHAHAHA!'
+            : 'Your Friend Won';
       case GameResult.DRAW:
         return 'Match Tied!';
     }
@@ -167,7 +174,11 @@ class _ResultSubtitle extends GetView<GameResultPageController> {
   Widget build(BuildContext context) {
     return description != null
         ? Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.only(
+              left: 20,
+              top: 8.0,
+              right: 20,
+            ),
             child: Text(
               description!,
               style: Styles.medium(
@@ -185,9 +196,13 @@ class _ResultSubtitle extends GetView<GameResultPageController> {
       case GameResult.WON:
         return null;
       case GameResult.LOST:
-        return 'I won, this is a good beginning of my plan to dominate the human race.';
+        if (controller.arguments!.isOpponentRobot) {
+          return 'I won, this is a good beginning of my plan to dominate the human race.';
+        } else {
+          return 'Better Luck Next Time 😜';
+        }
       case GameResult.DRAW:
-        return 'Let try once again';
+        return 'Let\'s try once again';
     }
   }
 }

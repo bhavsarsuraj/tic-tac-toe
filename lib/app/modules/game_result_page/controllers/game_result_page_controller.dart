@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tic_tac_toe/app/modules/tic_tac_toe_play_page/controllers/tic_tac_toe_play_page_controller.dart';
 import 'package:tic_tac_toe/app/routes/app_pages.dart';
 import 'package:tic_tac_toe/app/utils/enums.dart';
 
 class GameResultPageArguments {
   final GameResult gameResult;
   final bool isOpponentRobot;
+  final TicTacToeSymbol mySymbol;
 
   GameResultPageArguments({
     required this.gameResult,
     required this.isOpponentRobot,
+    required this.mySymbol,
   });
 }
 
@@ -42,7 +45,9 @@ class GameResultPageController extends GetxController
     if (!_isValid) {
       return;
     }
-    if (arguments!.gameResult == GameResult.WON) {
+    if (arguments!.gameResult == GameResult.WON ||
+        (!arguments!.isOpponentRobot &&
+            arguments!.gameResult == GameResult.LOST)) {
       animationShown = false;
     }
   }
@@ -56,8 +61,17 @@ class GameResultPageController extends GetxController
     super.onReady();
   }
 
-  void didTapReset() {
-    Get.offNamed(Routes.CUSTOMIZE_GAME_PAGE);
+  void didTapReset() async {
+    Get.offNamed(
+      Routes.TIC_TAC_TOE_PLAY_PAGE,
+      arguments: TicTacToePlayPageArguments(
+        // The person with CROSS symbol will play first move
+        isMyTurnFirst:
+            arguments!.mySymbol == TicTacToeSymbol.CROSS ? true : false,
+        isOpponentRobot: arguments!.isOpponentRobot,
+        myPlayingSymbol: arguments!.mySymbol,
+      ),
+    );
   }
 
   void didTapHome() {

@@ -10,13 +10,13 @@ import 'package:tic_tac_toe/app/widgets/sheets/warning_sheet.dart';
 
 class TicTacToePlayPageArguments {
   final bool isMyTurnFirst;
-  final Difficulty difficulty;
   final TicTacToeSymbol myPlayingSymbol;
+  final bool isOpponentRobot;
 
   TicTacToePlayPageArguments({
     this.isMyTurnFirst = true,
-    this.difficulty = Difficulty.EASY,
     this.myPlayingSymbol = TicTacToeSymbol.CROSS,
+    required this.isOpponentRobot,
   });
 }
 
@@ -27,7 +27,7 @@ class TicTacToePlayPageController extends GetxController {
   late Rx<TicTacToe> _ticTacToe;
   TicTacToe get ticTacToe => _ticTacToe.value;
   set ticTacToe(TicTacToe value) => this._ticTacToe.value = value;
-  late int boardSize;
+  final boardSize = 3;
 
   final _isMyTurn = true.obs;
   bool get isMyTurn => this._isMyTurn.value;
@@ -58,7 +58,6 @@ class TicTacToePlayPageController extends GetxController {
     }
     _configureFirstTurn();
     _configureTicTacToe();
-    _configureBoardSize();
   }
 
   void _configureFirstTurn() {
@@ -71,15 +70,8 @@ class TicTacToePlayPageController extends GetxController {
 
   void _configureTicTacToe() {
     _ticTacToe = TicTacToe(
-      difficulty: arguments!.difficulty,
-      myMarkingSymbol: BlockStatus.CROSS,
+      myMarkingSymbol: arguments!.myPlayingSymbol,
     ).obs;
-  }
-
-  void _configureBoardSize() {
-    boardSize = TicTacToeHelper.getBoardSizeFromDifficulty(
-      arguments!.difficulty,
-    );
   }
 
   void _flipPlayerTurn() {
@@ -88,18 +80,27 @@ class TicTacToePlayPageController extends GetxController {
 
   void onTapBlock(int row, int col) {
     if (ticTacToe.board[row][col].value.blockStatus != BlockStatus.NONE) return;
+    TicTacToeSymbol markingSymbol;
+    if (arguments!.isOpponentRobot) {
+      markingSymbol = arguments!.myPlayingSymbol;
+    } else {
+      if (isMyTurn)
+        markingSymbol = arguments!.myPlayingSymbol;
+      else
+        markingSymbol = ticTacToe.opponentMarkingSymbol;
+    }
     final gameStatus = ticTacToe.playMove(
       Move(
         row: row,
         col: col,
-        blockStatus: ticTacToe.myMarkingSymbol,
+        blockStatus: TicTacToeHelper.getBlockStatusFromSymbol(markingSymbol),
       ),
     );
 
     switch (gameStatus.resultStatus) {
       case GameResultStatus.CONTINUE:
         _flipPlayerTurn();
-        _playComputerMove();
+        if (arguments!.isOpponentRobot) _playComputerMove();
         break;
       case GameResultStatus.FINISHED:
         _onFinished(
@@ -138,7 +139,8 @@ class TicTacToePlayPageController extends GetxController {
         Routes.GAME_RESULT_PAGE,
         arguments: GameResultPageArguments(
           gameResult: isMeWinner ? GameResult.WON : GameResult.LOST,
-          isOpponentRobot: true,
+          isOpponentRobot: arguments!.isOpponentRobot,
+          mySymbol: arguments!.myPlayingSymbol,
         ),
       );
     });
@@ -150,7 +152,8 @@ class TicTacToePlayPageController extends GetxController {
         Routes.GAME_RESULT_PAGE,
         arguments: GameResultPageArguments(
           gameResult: GameResult.DRAW,
-          isOpponentRobot: true,
+          isOpponentRobot: arguments!.isOpponentRobot,
+          mySymbol: arguments!.myPlayingSymbol,
         ),
       );
     });
@@ -158,7 +161,9 @@ class TicTacToePlayPageController extends GetxController {
 
   void _checkFirstPlayersTurn() {
     if (!isMyTurn) {
-      _playComputerMove();
+      if (arguments!.isOpponentRobot) {
+        _playComputerMove();
+      }
     }
   }
 
@@ -175,7 +180,7 @@ class TicTacToePlayPageController extends GetxController {
     if (reset != null && reset is bool && reset) {
       ticTacToe.resetGame();
       isMyTurn = arguments!.isMyTurnFirst;
-      _configureFirstTurn();
+      _checkFirstPlayersTurn();
       _ticTacToe.refresh();
     }
   }

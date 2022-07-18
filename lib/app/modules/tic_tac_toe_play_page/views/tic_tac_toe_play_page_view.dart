@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:tic_tac_toe/app/utils/constants/app_colors.dart';
 import 'package:tic_tac_toe/app/utils/constants/images.dart';
 import 'package:tic_tac_toe/app/utils/constants/styles.dart';
-import 'package:tic_tac_toe/app/utils/enums.dart';
 import 'package:tic_tac_toe/app/utils/widgets/base_scaffold.dart';
 import 'package:tic_tac_toe/app/widgets/scores_view.dart';
 import 'package:tic_tac_toe/app/widgets/tic_tac_toe_block_view.dart';
@@ -40,8 +39,6 @@ class TicTacToePlayPageView extends GetView<TicTacToePlayPageController> {
                   _PlayerTurn(),
                   SizedBox(height: 20),
                   _PlayingBoard(padding: padding),
-                  SizedBox(height: 32),
-                  _DifficultyMode(),
                 ],
               ),
             ),
@@ -69,7 +66,7 @@ class _PlayerTurn extends GetView<TicTacToePlayPageController> {
   Widget build(BuildContext context) {
     return Obx(
       () => Text(
-        controller.isMyTurn ? 'Your Turn' : 'Robot’s Turn',
+        text,
         style: Styles.semibold(
           24,
           AppColors.black,
@@ -77,6 +74,22 @@ class _PlayerTurn extends GetView<TicTacToePlayPageController> {
         textAlign: TextAlign.center,
       ),
     );
+  }
+
+  String get text {
+    if (controller.arguments!.isOpponentRobot) {
+      if (controller.isMyTurn) {
+        return 'Your Turn';
+      } else {
+        return 'Robot’s Turn';
+      }
+    } else {
+      if (controller.isMyTurn) {
+        return 'Your Turn';
+      } else {
+        return 'Your Friend\'s Turn';
+      }
+    }
   }
 }
 
@@ -122,8 +135,7 @@ class _PlayingBoard extends GetView<TicTacToePlayPageController> {
               return Obx(
                 () => TicTacToeBlockView(
                   block: controller.ticTacToe.board[row][col].value,
-                  onTap: () => controller.onTapBlock(row, col),
-                  difficulty: controller.arguments!.difficulty,
+                  onTap: () => _onTapBlock(row, col),
                   row: row,
                   col: col,
                 ),
@@ -134,31 +146,14 @@ class _PlayingBoard extends GetView<TicTacToePlayPageController> {
       ),
     );
   }
-}
 
-class _DifficultyMode extends GetView<TicTacToePlayPageController> {
-  const _DifficultyMode({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Mode: $difficultyString',
-      style: Styles.medium(
-        16,
-        AppColors.brown.withOpacity(0.8),
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  String get difficultyString {
-    switch (controller.arguments!.difficulty) {
-      case Difficulty.EASY:
-        return 'Easy';
-      case Difficulty.MEDIUM:
-        return 'Medium';
-      case Difficulty.HARD:
-        return 'Hard';
+  void _onTapBlock(int row, int col) {
+    if (controller.arguments!.isOpponentRobot) {
+      if (controller.isMyTurn) {
+        controller.onTapBlock(row, col);
+      }
+    } else {
+      controller.onTapBlock(row, col);
     }
   }
 }
