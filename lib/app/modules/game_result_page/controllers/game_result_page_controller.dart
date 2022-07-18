@@ -8,11 +8,14 @@ class GameResultPageArguments {
   final GameResult gameResult;
   final bool isOpponentRobot;
   final TicTacToeSymbol mySymbol;
-
+  final int myWins;
+  final int opponentWins;
   GameResultPageArguments({
     required this.gameResult,
     required this.isOpponentRobot,
     required this.mySymbol,
+    required this.myWins,
+    required this.opponentWins,
   });
 }
 
@@ -70,6 +73,8 @@ class GameResultPageController extends GetxController
             arguments!.mySymbol == TicTacToeSymbol.CROSS ? true : false,
         isOpponentRobot: arguments!.isOpponentRobot,
         myPlayingSymbol: arguments!.mySymbol,
+        myWins: arguments!.myWins,
+        opponentWins: arguments!.opponentWins,
       ),
     );
   }

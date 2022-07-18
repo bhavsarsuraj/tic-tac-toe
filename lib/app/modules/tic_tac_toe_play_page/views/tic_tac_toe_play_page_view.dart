@@ -46,9 +46,9 @@ class TicTacToePlayPageView extends GetView<TicTacToePlayPageController> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ScoresView(
-                  myScore: 0,
-                  opponentScore: 1,
-                  isOpponentRobot: true,
+                  myWins: controller.myWins,
+                  opponentWins: controller.opponentWins,
+                  isOpponentRobot: controller.arguments!.isOpponentRobot,
                 ),
               ],
             ),

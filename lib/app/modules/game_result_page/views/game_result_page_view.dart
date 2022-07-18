@@ -97,9 +97,9 @@ class _Scaffold extends GetView<GameResultPageController> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ScoresView(
-                myScore: 0,
-                opponentScore: 1,
-                isOpponentRobot: true,
+                isOpponentRobot: controller.arguments!.isOpponentRobot,
+                myWins: controller.arguments!.myWins,
+                opponentWins: controller.arguments!.opponentWins,
               ),
             ],
           ),

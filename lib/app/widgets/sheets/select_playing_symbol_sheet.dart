@@ -41,7 +41,7 @@ class SelectPlayingSymbolSheet extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Choose Symbol',
+                  'Choose Your Symbol',
                   style: Styles.semibold(16, AppColors.black),
                 ),
                 SizedBox(height: 16),

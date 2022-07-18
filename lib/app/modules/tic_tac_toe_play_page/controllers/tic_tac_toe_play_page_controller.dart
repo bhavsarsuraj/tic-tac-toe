@@ -12,11 +12,15 @@ class TicTacToePlayPageArguments {
   final bool isMyTurnFirst;
   final TicTacToeSymbol myPlayingSymbol;
   final bool isOpponentRobot;
+  final int myWins;
+  final int opponentWins;
 
   TicTacToePlayPageArguments({
     this.isMyTurnFirst = true,
     this.myPlayingSymbol = TicTacToeSymbol.CROSS,
     required this.isOpponentRobot,
+    this.myWins = 0,
+    this.opponentWins = 0,
   });
 }
 
@@ -34,6 +38,14 @@ class TicTacToePlayPageController extends GetxController {
   set isMyTurn(bool value) => this._isMyTurn.value = value;
 
   bool _isValid = true;
+
+  final _myWins = 0.obs;
+  int get myWins => this._myWins.value;
+  set myWins(int value) => this._myWins.value = value;
+
+  final _opponentWins = 0.obs;
+  int get opponentWins => this._opponentWins.value;
+  set opponentWins(int value) => this._opponentWins.value = value;
 
   @override
   void onInit() {
@@ -58,6 +70,7 @@ class TicTacToePlayPageController extends GetxController {
     }
     _configureFirstTurn();
     _configureTicTacToe();
+    _configureScore();
   }
 
   void _configureFirstTurn() {
@@ -72,6 +85,11 @@ class TicTacToePlayPageController extends GetxController {
     _ticTacToe = TicTacToe(
       myMarkingSymbol: arguments!.myPlayingSymbol,
     ).obs;
+  }
+
+  void _configureScore() {
+    myWins = arguments!.myWins;
+    opponentWins = arguments!.opponentWins;
   }
 
   void _flipPlayerTurn() {
@@ -133,7 +151,12 @@ class TicTacToePlayPageController extends GetxController {
     });
   }
 
-  void _onFinished({required bool isMeWinner}) {
+  void _onFinished({required bool isMeWinner}) async {
+    if (isMeWinner) {
+      myWins++;
+    } else {
+      opponentWins++;
+    }
     Future.delayed(Duration(microseconds: 300), () {
       Get.offNamed(
         Routes.GAME_RESULT_PAGE,
@@ -141,12 +164,14 @@ class TicTacToePlayPageController extends GetxController {
           gameResult: isMeWinner ? GameResult.WON : GameResult.LOST,
           isOpponentRobot: arguments!.isOpponentRobot,
           mySymbol: arguments!.myPlayingSymbol,
+          myWins: myWins,
+          opponentWins: opponentWins,
         ),
       );
     });
   }
 
-  void _onDraw() {
+  void _onDraw() async {
     Future.delayed(Duration(milliseconds: 300), () {
       Get.offNamed(
         Routes.GAME_RESULT_PAGE,
@@ -154,6 +179,8 @@ class TicTacToePlayPageController extends GetxController {
           gameResult: GameResult.DRAW,
           isOpponentRobot: arguments!.isOpponentRobot,
           mySymbol: arguments!.myPlayingSymbol,
+          myWins: myWins,
+          opponentWins: opponentWins,
         ),
       );
     });

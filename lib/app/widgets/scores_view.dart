@@ -4,13 +4,13 @@ import 'package:tic_tac_toe/app/utils/constants/images.dart';
 import 'package:tic_tac_toe/app/utils/constants/styles.dart';
 
 class ScoresView extends StatelessWidget {
-  final num myScore;
-  final num opponentScore;
+  final num myWins;
+  final num opponentWins;
   final bool isOpponentRobot;
   const ScoresView({
     Key? key,
-    required this.myScore,
-    required this.opponentScore,
+    required this.myWins,
+    required this.opponentWins,
     required this.isOpponentRobot,
   }) : super(key: key);
 
@@ -22,12 +22,12 @@ class ScoresView extends StatelessWidget {
         _PLayerScoreView(
           imagePath: Images.hand_wave,
           title: 'My Score',
-          score: 0,
+          score: myWins,
         ),
         _PLayerScoreView(
           imagePath: isOpponentRobot ? Images.robot : Images.person2,
-          title: isOpponentRobot ? 'Robot Score' : 'Person 2 Score',
-          score: 1,
+          title: isOpponentRobot ? 'Robot Score' : 'Friend\'s Score',
+          score: opponentWins,
         ),
       ],
     );
@@ -64,7 +64,7 @@ class _PLayerScoreView extends StatelessWidget {
                   height: 24,
                   width: 24,
                 ),
-                SizedBox(width: 12),
+                SizedBox(width: 8),
                 Text(
                   title,
                   style: Styles.semibold(
@@ -77,7 +77,7 @@ class _PLayerScoreView extends StatelessWidget {
             ),
             SizedBox(height: 14),
             Text(
-              '1',
+              '$score',
               style: Styles.semibold(
                 24,
                 AppColors.black,
